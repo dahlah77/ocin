@@ -1,28 +1,32 @@
 {
   "project": "OCIN",
   "baseline": "v2.2",
-  "artifact": "github-ready private repository source",
-  "status": "SOURCE_VALIDATED_UNBUILT_GITHUB_NOT_PUBLISHED",
+  "artifact": "public GitHub source repository",
+  "status": "SOURCE_IMPORTED_LINUX_CI_IN_PROGRESS",
   "file_count_without_manifest": 33,
   "tests_passed": [
-    "Static source presence",
-    "Python bootstrap 5/5",
-    "publish_github.sh bash syntax",
-    "SHA256SUMS integrity"
+    "Source archive SHA-256 import validation",
+    "Python bootstrap 5/5 on GitHub Linux",
+    "Rust/Flutter scaffold generation on GitHub Linux",
+    "Root and bridge Cargo metadata verified on GitHub Linux"
   ],
   "not_tested": [
-    "Cargo/Rust compilation",
-    "FRB codegen",
-    "Flutter analyze/test",
-    "GPU shader",
-    "Xcode native",
-    "GitHub Actions run"
+    "Rust cargo core/bridge unit tests on latest commit",
+    "Flutter analyze/test on latest commit",
+    "GPU shader and widget runtime",
+    "macOS/iOS/Windows/Android native platforms",
+    "Physical-device benchmark"
   ],
   "target_repo": "dahlah77/ocin",
-  "target_visibility": "private",
+  "target_visibility": "public",
   "constraints": [
     "no paid service",
     "no user laptop",
     "do not overwrite existing unrelated repositories"
-  ]
+  ],
+  "publication": {
+    "url": "https://github.com/dahlah77/ocin",
+    "main_ci": "https://github.com/dahlah77/ocin/actions/workflows/ci.yml",
+    "note": "GitHub Actions run logs, not this manifest, are authoritative for test status"
+  }
 }
