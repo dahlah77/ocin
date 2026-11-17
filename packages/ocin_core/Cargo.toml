@@ -1,0 +1,15 @@
+[package]
+name = "ocin_core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "OCIN POC-01 independent Rust core; no remote access implementation"
+
+[dependencies]
+ed25519-dalek = { version = "2.2", features = ["rand_core"] }
+rand = "0.8.5"
+blake3 = "1.8"
+hex = "0.4"
+
+[dev-dependencies]
+# Currently uses standard Rust test framework, no extra dependencies.

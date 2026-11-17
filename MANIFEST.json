@@ -1,0 +1,28 @@
+{
+  "project": "OCIN",
+  "baseline": "v2.2",
+  "artifact": "github-ready private repository source",
+  "status": "SOURCE_VALIDATED_UNBUILT_GITHUB_NOT_PUBLISHED",
+  "file_count_without_manifest": 33,
+  "tests_passed": [
+    "Static source presence",
+    "Python bootstrap 5/5",
+    "publish_github.sh bash syntax",
+    "SHA256SUMS integrity"
+  ],
+  "not_tested": [
+    "Cargo/Rust compilation",
+    "FRB codegen",
+    "Flutter analyze/test",
+    "GPU shader",
+    "Xcode native",
+    "GitHub Actions run"
+  ],
+  "target_repo": "dahlah77/ocin",
+  "target_visibility": "private",
+  "constraints": [
+    "no paid service",
+    "no user laptop",
+    "do not overwrite existing unrelated repositories"
+  ]
+}

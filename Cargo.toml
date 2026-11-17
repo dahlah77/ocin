@@ -1,0 +1,4 @@
+[workspace]
+members = ["packages/ocin_core"]
+exclude = ["apps/ocin_app/rust"]
+resolver = "2"
