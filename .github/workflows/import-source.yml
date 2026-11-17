@@ -1,0 +1,74 @@
+name: OCIN verified source import and initial checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ocin-source-import
+  cancel-in-progress: false
+jobs:
+  import-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact source archive checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat bootstrap/source.part{00..03}.b64 | base64 --decode > /tmp/ocin_source.tar.xz
+          echo "382856e328f544ac17445d20d48aced170ab604c77a8620e556ca6d0b94a138b  /tmp/ocin_source.tar.xz" | sha256sum --check
+          python3 - <<'PY'
+          import tarfile
+          with tarfile.open('/tmp/ocin_source.tar.xz') as archive:
+              members = archive.getmembers()
+              assert len(members) == 35
+              for item in members:
+                  assert item.isfile(), item.name
+                  assert not item.name.startswith('/'), item.name
+                  assert '..' not in item.name.split('/'), item.name
+          print('Source tree has 35 safe files')
+          PY
+      - name: Publish individual OCIN source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -xJf /tmp/ocin_source.tar.xz
+          python3 scripts/validate_structure.py
+          python3 -m unittest discover -s scripts -p 'test_*.py' -v
+          rm -rf bootstrap
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: import verified OCIN v2.2 PoC-01 and PoC-02 source'
+          git push origin HEAD:main
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Linux build requirements
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends clang libclang-dev cmake ninja-build libgtk-3-dev pkg-config
+      - name: Install flutter_rust_bridge generator
+        run: cargo install flutter_rust_bridge_codegen --version 2.13.0 --locked
+      - name: Bootstrap FRB and Flutter
+        run: python3 scripts/bootstrap.py
+      - name: Run Rust core and FFI tests
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace --all-targets
+          cargo test --manifest-path apps/ocin_app/rust/Cargo.toml
+      - name: Flutter analysis and unit tests
+        working-directory: apps/ocin_app
+        run: |
+          flutter analyze
+          flutter test
