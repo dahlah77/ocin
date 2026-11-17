@@ -62,15 +62,15 @@ flutter run
 On the app dashboard choose **Buka POC-02 · Liquid Glass Benchmark**. Use `flutter run --profile` with a real GPU-capable device and record screenshots/timing. The SwiftUI native plugin is automatically registered by the Flutter plugin system on iOS/macOS after scaffold generation and pod installation.
 
 
-## GitHub publishing — private OCIN repository
+## GitHub repository
 
-The project includes `scripts/publish_github.sh` for a one-command, fail-closed publishing workflow using GitHub CLI. It creates `dahlah77/ocin` as **private** when the signed-in account is `dahlah77`, refuses accidental changes to other or existing nonempty repositories, and pushes the project to trigger CI. See `docs/GITHUB_PUBLISH_AND_CI.md`.
+Public source: https://github.com/dahlah77/ocin
 
-This **has not been executed** in the assembly environment because the linked GitHub connector lacks repository-creation authority and the browser automation service requires paid credit. **No new remote repository and no remote CI run have been created.**
+Flutter/Rust PoC-01/02 source is on the `main` branch. GitHub Actions provides automated Linux validation; Apple native builds and GPU behavior still require compatible physical-device tests. The repository is **public by the owner's explicit choice**.
 
 ## Continuous integration
 
-Push this tree to a GitHub repository to run `.github/workflows/ci.yml` using GitHub Actions. No repository or workflow has been created remotely by the assistant. Linux CI can validate Rust/FRB/Dart but **cannot certify Apple native Swift or actual GPU rendering**. CI minutes are subject to GitHub's free budget; **workflow YAML cannot force US$0 billing**. Set billing safeguards at account level and do not enable paid overage.
+The `.github/workflows/ci.yml` workflow is installed in this repository and runs on source changes. Linux CI can validate Rust/FRB/Dart but **cannot certify Apple native Swift or actual GPU rendering**. CI minutes are subject to GitHub's free budget; **workflow YAML cannot force US$0 billing**. Set billing safeguards at account level and do not enable paid overage.
 
 ### To review with Gemini
 
