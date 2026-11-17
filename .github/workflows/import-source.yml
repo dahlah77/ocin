@@ -38,6 +38,8 @@ jobs:
         run: |
           set -euo pipefail
           tar -xJf /tmp/ocin_source.tar.xz
+          # Workflow-token cannot add new workflow files. Publish CI separately via authenticated connector.
+          mv .github/workflows/ci.yml /tmp/ocin_ci.yml
           python3 scripts/validate_structure.py
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           rm -rf bootstrap
