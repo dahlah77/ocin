@@ -1,30 +1,17 @@
-# OCIN — GitHub private publication & CI
+# OCIN — GitHub publication and CI
 
-## Intended target
-
-- Account: `dahlah77`
-- Repository: `ocin`
-- Visibility: **private**
+- Repository: https://github.com/dahlah77/ocin
+- Owner: `dahlah77`
+- Visibility: **PUBLIC**, explicitly authorized by the owner
 - Default branch: `main`
 - Workflow: `.github/workflows/ci.yml`
-- Paid-service dependency: **none intended**
 
-## Automated publishing (when a GitHub-capable host/connector is available)
+The OCIN v2.2 source was imported via a SHA-256-verified archive on GitHub Actions, then committed as individual source files. The one-time source importer was removed after the import. The two primary PoC modules are `packages/ocin_core` and `apps/ocin_app`; the Apple SwiftUI plugin is in `packages/ocin_native_glass`.
 
-With GitHub CLI authenticated as `dahlah77` and a locally initialized Git repository, run:
+## Verification boundaries
 
-```bash
-bash scripts/publish_github.sh
-```
+The Linux CI installs Rust and Flutter, runs the official FRB generator, tests the Rust core and bridge, and runs Flutter analysis and widget tests. The GitHub workflow cannot prove macOS/iOS native Swift compilation, Windows hardware rendering, BLE interoperability, or real device performance. For those platforms keep the status **NOT TESTED** until device evidence exists.
 
-The script verifies the signed-in account, creates `dahlah77/ocin` **private** when absent, refuses non-private or nonempty conflicting destinations, and pushes `main`. It does not require paid GitHub subscriptions. If it cannot create a repository, it fails without writing source files to an unrelated project.
+GitHub standard hosted runners on public repos generally do not consume included private-repo runner minutes; verify current GitHub policies for future changes. No GitHub Actions workflow can force an account billing budget.
 
-## CI verification
-
-CI triggers on push to `main` from `.github/workflows/ci.yml` and executes Python tests, FRB code generation, Rust tests, and Flutter analyze/widget tests on Linux. CI does *not* establish success on macOS, Windows, iOS, Android native, shader GPU or hardware. Actual GitHub logs must be collected before marking PASS.
-
-**No automatic $0 guarantee:** GitHub account/org billing restrictions must be verified in GitHub settings; source code cannot set a billing-spend threshold. Using the included allocation is not the same as a zero compute usage charge. Private repositories consume included runner allocation.
-
-## Current access limitation
-
-The linked GitHub connector can inspect and write files in existing repositories but does not currently expose `create repository`. Creation must occur through a GitHub authenticated host or UI; this is not resolved by repeatedly calling GitHub file-write endpoints. Browser automation was unavailable without a paid balance, contrary to OCIN's Rp0 policy. The source package remains ready for a zero-cost publish command when authenticated GitHub CLI access is available.
+See [GitHub Actions](https://github.com/dahlah77/ocin/actions) for authoritative workflow outcomes. Do not use statements about hypothetical build success as test evidence.
