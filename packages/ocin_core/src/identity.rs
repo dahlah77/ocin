@@ -37,11 +37,7 @@ pub fn create_ephemeral_identity_proof(challenge: &str) -> Result<IdentityProof,
     })
 }
 
-pub fn verify_identity_proof(
-    challenge: &str,
-    public_key_hex: &str,
-    signature_hex: &str,
-) -> bool {
+pub fn verify_identity_proof(challenge: &str, public_key_hex: &str, signature_hex: &str) -> bool {
     if challenge.is_empty() || challenge.len() > MAX_CHALLENGE_BYTES {
         return false;
     }
@@ -61,7 +57,10 @@ pub fn verify_identity_proof(
         return false;
     };
     verifying_key
-        .verify_strict(&identity_message(challenge), &Signature::from_bytes(&sig_bytes))
+        .verify_strict(
+            &identity_message(challenge),
+            &Signature::from_bytes(&sig_bytes),
+        )
         .is_ok()
 }
 
@@ -73,7 +72,9 @@ mod tests {
     fn sign_and_verify_roundtrip() {
         let proof = create_ephemeral_identity_proof("ocin-demo-challenge").unwrap();
         assert!(verify_identity_proof(
-            "ocin-demo-challenge", &proof.public_key_hex, &proof.signature_hex
+            "ocin-demo-challenge",
+            &proof.public_key_hex,
+            &proof.signature_hex
         ));
         assert_eq!(
             proof.challenge_hash_hex,
