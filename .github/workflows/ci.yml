@@ -1,0 +1,67 @@
+name: OCIN / POC-01 and POC-02 / Linux validation
+on:
+  push:
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'scripts/**'
+      - 'Cargo.toml'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'scripts/**'
+      - 'Cargo.toml'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ocin-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  linux-full-poc:
+    name: Rust/FRB/Flutter/bootstrap (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Linux build prerequisites
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends clang libclang-dev cmake ninja-build libgtk-3-dev pkg-config
+      - uses: Swatinem/rust-cache@v2
+      - name: Python static and idempotence tests
+        run: |
+          python3 scripts/validate_structure.py
+          python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: FRB v2 generator
+        run: cargo install flutter_rust_bridge_codegen --version 2.13.0 --locked
+      - name: Generate official Flutter and Rust bridges
+        run: python3 scripts/bootstrap.py
+      - name: Rust core lint/test
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace --all-targets
+      - name: Rust bridge crate tests
+        run: cargo test --manifest-path apps/ocin_app/rust/Cargo.toml
+      - name: Flutter formatting and tests
+        working-directory: apps/ocin_app
+        run: |
+          dart format lib test
+          flutter analyze
+          flutter test
+      - name: CI notice
+        run: echo 'This tests Linux only; Apple/Windows/Android GPU and native builds remain NOT TESTED.'
+# IMPORTANT: GitHub Actions YAML cannot enforce account-level US$0 spending.
+# Disable paid overages / configure budget and stop rules in GitHub Billing.
+# This workflow intentionally has no auto macOS, Windows or iOS runner.
